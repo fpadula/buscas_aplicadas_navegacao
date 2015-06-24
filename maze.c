@@ -11,69 +11,116 @@
 
 /**************************** LIST FUNCTIONS ******************************************************/
 #define LIST_SIZE 50
+#define QEUE '0'
+#define STACK '1'
 
 typedef struct{
-  int x;
-  int y;
+	int x;
+	int y;
 } list_n;
 
 typedef struct{
-  list_n list_nodes[LIST_SIZE];
-  int last_node_pos;
+	char type;
+	list_n list_nodes[LIST_SIZE];
+	int last_node_pos;
 } list;
 
 
-void initialize_list(list *list){
+void initialize_list(list *list, char type){
 	int i;
 
 	for(i=0;i<LIST_SIZE;i++){
 		list->list_nodes[i].x = -1;
 		list->list_nodes[i].y = -1;
 	}
-	list->last_node_pos = 0;
+	list->last_node_pos = -1;
+	list->type = type;
 }
 
 int pop(list *list, list_n *node){
-	if(list->last_node_pos >= 0){
-		node->x = list->list_nodes[list->last_node_pos-1].x;
-		node->y = list->list_nodes[list->last_node_pos-1].y;
-		list->list_nodes[list->last_node_pos-1].x = -1;
-		list->list_nodes[list->last_node_pos-1].y = -1;
-		list->last_node_pos--;
-		return 1;
-	}else{
+	int i;
+
+	if(list->type == STACK){
+		if(list->last_node_pos > -1){
+			node->x = list->list_nodes[list->last_node_pos].x;
+			node->y = list->list_nodes[list->last_node_pos].y;
+			list->list_nodes[list->last_node_pos].x = -1;
+			list->list_nodes[list->last_node_pos].y = -1;
+			list->last_node_pos--;
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(list->type == QEUE){
+		if(list->last_node_pos > -1){
+			node->x = list->list_nodes[0].x;
+			node->y = list->list_nodes[0].y;
+			for (i=0;i<=list->last_node_pos-1;i++){
+				list->list_nodes[i].x = list->list_nodes[i+1].x;
+				list->list_nodes[i].y = list->list_nodes[i+1].y;
+			}
+			list->list_nodes[list->last_node_pos].x = -1;
+			list->list_nodes[list->last_node_pos].y = -1;
+			list->last_node_pos--;
+			return 1;
+		}else{
+			return 0;
+		}
+	}else
 		return 0;
-	}
 }
 
 int push(list *list, list_n node){
-	if(list->last_node_pos < LIST_SIZE - 1){
-		list->last_node_pos++;
-		list->list_nodes[list->last_node_pos-1].x = node.x;
-		list->list_nodes[list->last_node_pos-1].y = node.y;
-		return 1;
-	}else{
+	int i;
+
+	if(list->type == STACK){
+		if(list->last_node_pos < LIST_SIZE - 1){
+			list->last_node_pos++;
+			list->list_nodes[list->last_node_pos-1].x = node.x;
+			list->list_nodes[list->last_node_pos-1].y = node.y;
+			return 1;
+		}else{
+			return 0;
+		}
+	}else if(list->type == QEUE){
+		if(list->last_node_pos < LIST_SIZE - 1){
+			for (i=list->last_node_pos;i>0;i--){
+				list->list_nodes[i].x = list->list_nodes[i-1].x;
+				list->list_nodes[i].y = list->list_nodes[i-1].y;
+			}
+			list->last_node_pos++;
+			list->list_nodes[0].x = node.x;
+			list->list_nodes[0].y = node.y;
+			return 1;
+		}else{
+			return 0;
+		}
+	}else
 		return 0;
-	}
 }
 
 
-/**************************** GRID MOVEMENT FUNCTIONS *********************************************/
+/**************************** GRID FUNCTIONS *********************************************/
 
+#define GRID_HEIGHT 4
+#define GRID_WIDTH 6
 #define MINDISTANCE 20
-#define TIME_BEFORE_TURN 2400
 #define TARGETCOLOR 8
-#define TARGETCOLOR_SILVER 30
+#define TARGETCOLOR_CITY 44
 #define CORRECTION_FACTOR 1
 #define MAX_TIME_OUTSIDE_TAPE 2000
 #define TOLERANCE 8
 #define TRY_TO_TURN_LEFT_DEFAULT false
 #define DIREITA 1
 #define ESQUERDA 0
+#define NORTE 0
+#define SUL 1
+#define LESTE 2
+#define OESTE 3
 #define TURN_TIME 120
 #define CELL_SIZE 627 // Cell size: 30. Angular distance: 30*20,9 = 627
 
-void move_straight(int ammount)
+void move_straight(int ammount, int orientation, int *position)
 {
 	int counter = 1;
 	int error;
@@ -105,11 +152,31 @@ void move_straight(int ammount)
 			wait1Msec(50);
 			traveled_distance = (getMotorEncoder(motorB)+getMotorEncoder(motorC))/2;
 		}while(traveled_distance <= CELL_SIZE);
+			switch(orientation){
+				case (NORTE):
+					position[1] = position[1] + 1;
+				break;
+
+				case (SUL):
+					position[1] = position[1] - 1;
+				break;
+
+				case (LESTE):
+					position[0] = position[0] + 1;
+				break;
+
+				case (OESTE):
+					position[0] = position[0] - 1;
+				break;
+
+				default:
+				break;
+			}
 		counter++;
 	}
 }
 
-void turn(int direction){
+void turn(int direction, int *orientation){
 	int distance;
 	int error;
 	int FORWARDSPEED = 20;
@@ -123,6 +190,27 @@ void turn(int direction){
 			error = abs(SensorValue[colorSensor] - TARGETCOLOR);
 			distance = getMotorEncoder(motorB);
 		}while(distance < TURN_TIME || error > TOLERANCE);
+
+		switch(*orientation){
+			case (NORTE):
+				*orientation = LESTE;
+			break;
+
+			case (SUL):
+				*orientation = OESTE;
+			break;
+
+			case (LESTE):
+				*orientation = SUL;
+			break;
+
+			case (OESTE):
+				*orientation = NORTE;
+			break;
+
+			default:
+			break;
+		}
 	}else if(direction == ESQUERDA){
 		do{
 			motor[leftMotor] = -FORWARDSPEED;
@@ -130,19 +218,146 @@ void turn(int direction){
 			error = abs(SensorValue[colorSensor] - TARGETCOLOR);
 			distance = getMotorEncoder(motorC);
 		}while(distance < TURN_TIME || error > TOLERANCE);
+
+		switch(*orientation){
+			case (NORTE):
+				*orientation = OESTE;
+			break;
+
+			case (SUL):
+				*orientation = LESTE;
+			break;
+
+			case (LESTE):
+				*orientation = NORTE;
+			break;
+
+			case (OESTE):
+				*orientation = SUL;
+			break;
+
+			default:
+			break;
+		}
 	}
+}
+
+void update_grid(int **grid, int x, int y, int value){
+	if(x >=0 && y >=0 && x < GRID_WIDTH && y < GRID_HEIGHT){
+		grid[x] = value;
+	}
+}
+
+void check_surroundings(int **grid, int *position, int orientation){
+	bool obstacle[3];
+
+	turn(ESQUERDA, &orientation);
+	if(SensorValue[sonarSensor] <= MINDISTANCE)
+		obstacle[0] = true;
+	else
+		obstacle[0] = false;
+
+	turn(DIREITA, &orientation);
+	if(SensorValue[sonarSensor] <= MINDISTANCE)
+		obstacle[1] = true;
+	else
+		obstacle[1] = false;
+
+	turn(DIREITA, &orientation);
+	if(SensorValue[sonarSensor] <= MINDISTANCE)
+		obstacle[2] = true;
+	else
+		obstacle[2] = false;
+
+	turn(ESQUERDA, &orientation);
+
+	switch(orientation){
+		case (NORTE):
+			update_grid(grid, position[0] - 1,position[1], obstacle[0] ? 1 : 0);
+			update_grid(grid, position[0],position[1] + 1, obstacle[1] ? 1 : 0);
+			update_grid(grid, position[0] + 1,position[1], obstacle[2] ? 1 : 0);
+		break;
+
+		case (SUL):
+			update_grid(grid, position[0] + 1,position[1], obstacle[0] ? 1 : 0);
+			update_grid(grid, position[0],position[1] - 1, obstacle[1] ? 1 : 0);
+			update_grid(grid, position[0] - 1,position[1], obstacle[2] ? 1 : 0);
+		break;
+
+		case (LESTE):
+			update_grid(grid, position[0],position[1] + 1, obstacle[0] ? 1 : 0);
+			update_grid(grid, position[0] + 1,position[1], obstacle[1] ? 1 : 0);
+			update_grid(grid, position[0],position[1] - 1, obstacle[2] ? 1 : 0);
+		break;
+
+		case (OESTE):
+			update_grid(grid, position[0],position[1] - 1, obstacle[0] ? 1 : 0);
+			update_grid(grid, position[0] - 1,position[1], obstacle[1] ? 1 : 0);
+			update_grid(grid, position[0],position[1] + 1, obstacle[2] ? 1 : 0);
+		break;
+
+		default:
+		break;
+	}
+
+}
+
+bool check_color(){
+	bool detected_collor;
+	int distance;
+	int error;
+	int FORWARDSPEED = 20;
+
+	resetMotorEncoder(motorC);
+	resetMotorEncoder(motorB);
+	detected_collor = false;
+	do{
+		motor[leftMotor] = FORWARDSPEED;
+		motor[rightMotor] = -FORWARDSPEED;
+		error = abs(SensorValue[colorSensor] - TARGETCOLOR);
+		distance = getMotorEncoder(motorB);
+	}while(distance < TURN_TIME);
+
+	error = abs(SensorValue[colorSensor] - TARGETCOLOR_CITY);
+	if (error < TOLERANCE)
+		detected_collor = true;
+
+	do{
+		motor[leftMotor] = -FORWARDSPEED;
+		motor[rightMotor] = FORWARDSPEED;
+		error = abs(SensorValue[colorSensor] - TARGETCOLOR);
+	}while(error > TOLERANCE);
+
+	return detected_collor;
 }
 
 /**************************** MAIN ROUTINE ********************************************************/
 
+
+
 task main()
 {
-	int grid[4][6] = {-1};
-	move_straight(5);
-	turn(DIREITA);
-	move_straight(1);
-	turn(DIREITA);
-	move_straight(3);
+	int grid[GRID_HEIGHT][GRID_WIDTH] =  { {-1} };
+	int orientation = SUL;
+	int position[2];
+	bool color;
+
+	/********Inicializing position********/
+	position[0] = 0;
+	position[1] = 3;
+
+	check_surroundings(grid, position, orientation);
+
+	move_straight(2, orientation, position);
+	color = check_color();
+	turn(ESQUERDA, &orientation);
+
+	move_straight(2, orientation, position);
+	check_color();
+	turn(DIREITA, &orientation);
+
+	move_straight(2, orientation, position);
+	check_color();
 
 	return;
 }

@@ -102,8 +102,8 @@ int push(list *list, list_n node){
 
 /**************************** GRID FUNCTIONS *********************************************/
 
-#define GRID_HEIGHT 4
-#define GRID_WIDTH 6
+#define GRID_NROWS 4
+#define GRID_NCOLS 6
 #define MINDISTANCE 20
 #define TARGETCOLOR 8
 #define TARGETCOLOR_CITY 44
@@ -133,7 +133,7 @@ void move_straight(int ammount, int orientation, int *position)
 		resetMotorEncoder(motorC);
 		resetMotorEncoder(motorB);
 		try_to_turn_left = TRY_TO_TURN_LEFT_DEFAULT;
-		do                                      //Percorre linha
+		do
 		{
 			error = abs(SensorValue[colorSensor] - TARGETCOLOR);
 			adjustment = round(error * CORRECTION_FACTOR);
@@ -242,58 +242,128 @@ void turn(int direction, int *orientation){
 	}
 }
 
-void update_grid(int **grid, int x, int y, int value){
-	if(x >=0 && y >=0 && x < GRID_WIDTH && y < GRID_HEIGHT){
-		grid[x] = value;
+void print_grid(int *grid){
+	int i,j;
+
+	for(i=0;i<GRID_NROWS;i++){
+		for(j=0;j<GRID_NCOLS;j++){
+			writeDebugStream("%d ", grid[GRID_NCOLS*i + j]);
+		}
+		writeDebugStreamLine("");
 	}
+
 }
 
-void check_surroundings(int **grid, int *position, int orientation){
-	bool obstacle[3];
+bool set_grid(int *grid, int x, int y, int value){
+	if(x >=0 && y >=0 && x < GRID_NROWS && y < GRID_NROWS){
+		grid[GRID_NCOLS*x + y] = value;
+		return true;
+	}
+	return false;
+}
 
-	turn(ESQUERDA, &orientation);
+bool update_non_visited(int *grid, int x, int y, int value){
+	if(grid[GRID_NCOLS*x + y] == -1)
+		return set_grid(grid,x,y,value);
+	else
+		return false;
+}
+
+void check_surroundings(int *grid, int *position, int orientation, list *nodes_to_visit){
+	bool obstacle[3];
+	list_n new_node;
+
+	turn(DIREITA, &orientation);
 	if(SensorValue[sonarSensor] <= MINDISTANCE)
 		obstacle[0] = true;
 	else
 		obstacle[0] = false;
 
-	turn(DIREITA, &orientation);
+	turn(ESQUERDA, &orientation);
 	if(SensorValue[sonarSensor] <= MINDISTANCE)
 		obstacle[1] = true;
 	else
 		obstacle[1] = false;
 
-	turn(DIREITA, &orientation);
+	turn(ESQUERDA, &orientation);
 	if(SensorValue[sonarSensor] <= MINDISTANCE)
 		obstacle[2] = true;
 	else
 		obstacle[2] = false;
 
-	turn(ESQUERDA, &orientation);
+	turn(DIREITA, &orientation);
 
 	switch(orientation){
 		case (NORTE):
-			update_grid(grid, position[0] - 1,position[1], obstacle[0] ? 1 : 0);
-			update_grid(grid, position[0],position[1] + 1, obstacle[1] ? 1 : 0);
-			update_grid(grid, position[0] + 1,position[1], obstacle[2] ? 1 : 0);
+			if (update_non_visited(grid, position[0] - 1,position[1], obstacle[0] ? 2 : 0)){
+				new_node.x = position[0] - 1;
+				new_node.y = position[1];
+				push(nodes_to_visit, new_node);
+			}
+			if (update_non_visited(grid, position[0],position[1] + 1, obstacle[1] ? 2 : 0)){
+				new_node.x = position[0];
+				new_node.y = position[1] + 1;
+				push(nodes_to_visit, new_node);
+			}
+			if (update_non_visited(grid, position[0] + 1,position[1], obstacle[2] ? 2 : 0)){
+				new_node.x = position[0] + 1;
+				new_node.y = position[1];
+				push(nodes_to_visit, new_node);
+			}
 		break;
 
 		case (SUL):
-			update_grid(grid, position[0] + 1,position[1], obstacle[0] ? 1 : 0);
-			update_grid(grid, position[0],position[1] - 1, obstacle[1] ? 1 : 0);
-			update_grid(grid, position[0] - 1,position[1], obstacle[2] ? 1 : 0);
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[0] ? 2 : 0)){
+				new_node.x = position[0] + 1;
+				new_node.y = position[1];
+				push(nodes_to_visit, new_node);
+			}
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[1] ? 2 : 0)){
+				new_node.x = position[0];
+				new_node.y = position[1] - 1;
+				push(nodes_to_visit, new_node);
+			}
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[2] ? 2 : 0)){
+				new_node.x = position[0] - 1;
+				new_node.y = position[1];
+				push(nodes_to_visit, new_node);
+			}
 		break;
 
 		case (LESTE):
-			update_grid(grid, position[0],position[1] + 1, obstacle[0] ? 1 : 0);
-			update_grid(grid, position[0] + 1,position[1], obstacle[1] ? 1 : 0);
-			update_grid(grid, position[0],position[1] - 1, obstacle[2] ? 1 : 0);
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[0] ? 2 : 0)){
+				new_node.x = position[0];
+				new_node.y = position[1] + 1;
+				push(nodes_to_visit, new_node);
+			}
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[1] ? 2 : 0)){
+				new_node.x = position[0] + 1;
+				new_node.y = position[1];
+				push(nodes_to_visit, new_node);
+			}
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[2] ? 2 : 0)){
+				new_node.x = position[0];
+				new_node.y = position[1] - 1;
+				push(nodes_to_visit, new_node);
+			}
 		break;
 
 		case (OESTE):
-			update_grid(grid, position[0],position[1] - 1, obstacle[0] ? 1 : 0);
-			update_grid(grid, position[0] - 1,position[1], obstacle[1] ? 1 : 0);
-			update_grid(grid, position[0],position[1] + 1, obstacle[2] ? 1 : 0);
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[0] ? 2 : 0)){
+				new_node.x = position[0];
+				new_node.y = position[1] - 1;
+				push(nodes_to_visit, new_node);
+			}
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[1] ? 2 : 0)){
+				new_node.x = position[0] - 1;
+				new_node.y = position[1];
+				push(nodes_to_visit, new_node);
+			}
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[2] ? 2 : 0)){
+				new_node.x = position[0];
+				new_node.y = position[1] + 1;
+				push(nodes_to_visit, new_node);
+			}
 		break;
 
 		default:
@@ -302,7 +372,7 @@ void check_surroundings(int **grid, int *position, int orientation){
 
 }
 
-bool check_color(){
+bool check_objective(){
 	bool detected_collor;
 	int distance;
 	int error;
@@ -331,33 +401,43 @@ bool check_color(){
 	return detected_collor;
 }
 
+bool move_to(int *grid, int *position, int orientation, list_n dest){
+	return false;
+}
+
 /**************************** MAIN ROUTINE ********************************************************/
 
 
 
 task main()
 {
-	int grid[GRID_HEIGHT][GRID_WIDTH] =  { {-1} };
-	int orientation = SUL;
+	int grid[GRID_NROWS*GRID_NROWS] =  { {-1} };
+	int orientation;
 	int position[2];
-	bool color;
+	int cities_found;
+	list nodes_to_visit;
+	list_n node_to_move;
 
-	/********Inicializing position********/
+
+	/********Initializing structures********/
 	position[0] = 0;
 	position[1] = 3;
+	orientation = SUL;
+	cities_found = 0;
+	set_grid(grid,2,3,3); // GOAL
+	initialize_list(nodes_to_visit, QEUE);
+	/***************************************/
 
-	check_surroundings(grid, position, orientation);
 
-	move_straight(2, orientation, position);
-	color = check_color();
-	turn(ESQUERDA, &orientation);
-
-	move_straight(2, orientation, position);
-	check_color();
-	turn(DIREITA, &orientation);
-
-	move_straight(2, orientation, position);
-	check_color();
-
+	while (cities_found <= 4){
+		if(check_objective()){
+			cities_found++;
+		}
+		set_grid(grid,position[0],position[1],1);
+		check_surroundings(grid, position, orientation, nodes_to_visit);
+		if(pop(nodes_to_visit, node_to_move)){ // Has node to move to.
+			move_to(grid,position,orientation,node_to_move);
+		}
+	}
 	return;
 }

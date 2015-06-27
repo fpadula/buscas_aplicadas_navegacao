@@ -23,6 +23,20 @@ bool isAdjacent(int x1, int y1, int x2, int y2){
 		return false;
 }
 
+void print_path(char *grid){
+	int i,j;
+	int x,y;
+	for(i=GRID_NROWS - 1;i>=0;i--){
+		for(j=0;j<GRID_NCOLS;j++){
+			x = grid[GRID_NCOLS*i + j]%GRID_NCOLS;
+			y = (grid[GRID_NCOLS*i + j] - x)/GRID_NCOLS;
+			writeDebugStream("%d,%d \t",x,y );
+		}
+		writeDebugStreamLine("");
+	}
+
+}
+
 void print_grid(char *grid){
 	int i,j;
 
@@ -185,17 +199,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 
 	switch(orientation){
 		case (NORTE):
-			if (update_non_visited(grid, position[0] - 1,position[1], obstacle[0] ? '3' : '1') && !obstacle[0]){
+			if (update_non_visited(grid, position[0] - 1,position[1], obstacle[0] ? '3' : '0') && !obstacle[0]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if (update_non_visited(grid, position[0],position[1] + 1, obstacle[1] ? '3' : '1') && !obstacle[1]){
+			if (update_non_visited(grid, position[0],position[1] + 1, obstacle[1] ? '3' : '0') && !obstacle[1]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
 			}
-			if (update_non_visited(grid, position[0] + 1,position[1], obstacle[2] ? '3' : '1') && !obstacle[2]){
+			if (update_non_visited(grid, position[0] + 1,position[1], obstacle[2] ? '3' : '0') && !obstacle[2]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
@@ -203,17 +217,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 		break;
 
 		case (SUL):
-			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[0] ? '3' : '1') && !obstacle[0]){
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[0] ? '3' : '0') && !obstacle[0]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[1] ? '3' : '1') && !obstacle[1]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[1] ? '3' : '0') && !obstacle[1]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[2] ? '3' : '1') && !obstacle[2]){
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[2] ? '3' : '0') && !obstacle[2]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
@@ -221,17 +235,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 		break;
 
 		case (LESTE):
-			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[0] ? '3' : '1') && !obstacle[0]){
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[0] ? '3' : '0') && !obstacle[0]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[1] ? '3' : '1') && !obstacle[1]){
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[1] ? '3' : '0') && !obstacle[1]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[2] ? '3' : '1') && !obstacle[2]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[2] ? '3' : '0') && !obstacle[2]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
@@ -239,17 +253,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 		break;
 
 		case (OESTE):
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[0] ? '3' : '1') && !obstacle[0]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[0] ? '3' : '0') && !obstacle[0]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[1] ? '3' : '1') && !obstacle[1]){
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[1] ? '3' : '0') && !obstacle[1]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[2] ? '3' : '1') && !obstacle[2]){
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[2] ? '3' : '0') && !obstacle[2]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
@@ -400,49 +414,76 @@ void move_to_adjacent(char *grid, int *position, int *orientation, list_n where_
 	}
 }
 
-bool move_to_next_node(char *grid, int *position, int *orientation, list *to_go, list *stacks, int *stack_to_push){
-	list_n dest_node;
+
+	
+bool move_to_next_node(char *grid, int *position, int *orientation, list *to_go){	
+	
+	list_n dest_node;	
 	list_n node_to_move;
-	list_n node_to_push;
-	list *list_to_push;	
-	list *list_to_pop;	
-	int stack_to_pop;
+	list_n bsf_node_check, bsf_node_add;
+	list bsf;
+	char added_on_qeue[GRID_NCOLS * GRID_NROWS];
 
-	if(*stack_to_push)
-		stack_to_pop = 0;
-	else
-		stack_to_pop = 1;	
-	if(!pop(to_go, dest_node)){ // Has node to move to.
-		return false;
-	}
+	int i;	
+	char buffer;
 
-	if(!isAdjacent(dest_node.x, dest_node.y, position[0], position[1])){		
-		if(*stack_to_push){
-			*stack_to_push = 0;
-			stack_to_pop = 1;
-		}else{
-			*stack_to_push = 1;
-			stack_to_pop = 0;
-		}
-		list_to_push = &stacks[*stack_to_push];
-		list_to_pop = &stacks[stack_to_pop];
-		do{
-			node_to_push.x = position[0];
-			node_to_push.y = position[1];			
-			push(list_to_push ,node_to_push);		
-			if(!pop(list_to_pop, node_to_move)){ // Has node to move to.
-				return false;
-			}
-			move_to_adjacent(grid, position, orientation, node_to_move);
-		}while(!isAdjacent(dest_node.x, dest_node.y, position[0], position[1]));
-	}
+	for(i=0;i<GRID_NROWS*GRID_NCOLS;i++)
+		added_on_qeue[i] = '0';
+	initialize_list(bsf,QEUE);
+	if(!pop(to_go, dest_node)) // Has node to move to.
+		return false;	
+	
 	if(isAdjacent(dest_node.x, dest_node.y, position[0], position[1])){
-		node_to_push.x = position[0];
-		node_to_push.y = position[1];
-		list_to_push = &stacks[*stack_to_push];
-		push(list_to_push ,node_to_push);
 		move_to_adjacent(grid, position, orientation, dest_node);
 		return true;
+	}else{
+		bsf_node_check.x = position[0];
+		bsf_node_check.y = position[1];	
+		push(bsf ,bsf_node_check);
+		do{			
+			pop(bsf, bsf_node_check);
+			sprintf(&buffer, "%c", GRID_NCOLS*(bsf_node_check.y) + (bsf_node_check.x));			
+			if(update_non_visited(added_on_qeue, bsf_node_check.x-1, bsf_node_check.y, buffer) && grid[GRID_NCOLS*(bsf_node_check.y) + (bsf_node_check.x-1)] == '2'){
+				bsf_node_add.x = bsf_node_check.x-1;
+				bsf_node_add.y = bsf_node_check.y;
+				push(bsf ,bsf_node_add);		
+			}				
+			if(update_non_visited(added_on_qeue, bsf_node_check.x, bsf_node_check.y+1, buffer) && grid[GRID_NCOLS*(bsf_node_check.y+1) + (bsf_node_check.x)] == '2'){
+				bsf_node_add.x = bsf_node_check.x;
+				bsf_node_add.y = bsf_node_check.y+1;
+				push(bsf ,bsf_node_add);
+			}
+			if(update_non_visited(added_on_qeue, bsf_node_check.x+1, bsf_node_check.y,buffer) && grid[GRID_NCOLS*(bsf_node_check.y) + (bsf_node_check.x+1)] == '2'){
+				bsf_node_add.x = bsf_node_check.x+1;
+				bsf_node_add.y = bsf_node_check.y;
+				push(bsf ,bsf_node_add);								
+			}	
+			if(update_non_visited(added_on_qeue, bsf_node_check.x, bsf_node_check.y-1, buffer) && grid[GRID_NCOLS*(bsf_node_check.y-1) + (bsf_node_check.x)] == '2'){
+				bsf_node_add.x = bsf_node_check.x;
+				bsf_node_add.y = bsf_node_check.y-1;
+				push(bsf ,bsf_node_add);										
+			}											
+		}while(!find(bsf,dest_node) && bsf.last_node_pos != -1);
+		
+		initialize_list(bsf,STACK);
+		node_to_move.x = added_on_qeue[GRID_NCOLS*dest_node.y + dest_node.x]%GRID_NCOLS;
+		node_to_move.y = (added_on_qeue[GRID_NCOLS*dest_node.y + dest_node.x ] - node_to_move.x)/GRID_NCOLS;			
+		push(bsf,dest_node);
+
+		while(!isAdjacent(node_to_move.x,node_to_move.y,position[0], position[1])){
+			push(bsf,node_to_move);
+			i = node_to_move.x;
+			node_to_move.x = added_on_qeue[GRID_NCOLS*node_to_move.y + node_to_move.x]%GRID_NCOLS;
+			node_to_move.y = (added_on_qeue[GRID_NCOLS*node_to_move.y + i] - node_to_move.x)/GRID_NCOLS;			
+		}
+		push(bsf,node_to_move);
+
+		while(bsf.last_node_pos != -1){
+			pop(bsf,node_to_move);
+			move_to_adjacent(grid, position, orientation, node_to_move);
+		}
+		return true;
 	}
+
 	return false;
 }

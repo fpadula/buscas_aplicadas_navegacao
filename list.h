@@ -1,4 +1,4 @@
-#define LIST_SIZE 20
+#define LIST_SIZE 30
 #define QEUE '0'
 #define STACK '1'
 
@@ -28,7 +28,7 @@ void initialize_list(list *list, char type){
 bool find(list *list, list_n *node){
 	int i;
 	for (i=0;i<=list->last_node_pos;i++){
-		if((list->list_nodes[i].x == list_n.x) && (list->list_nodes[i].y == list_n.y))
+		if((list->list_nodes[i].x == node->x) && (list->list_nodes[i].y == node->y))
 			return true;	 
 	}
 	return false;

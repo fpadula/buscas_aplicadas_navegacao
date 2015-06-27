@@ -12,22 +12,15 @@
 
 	int position[2];
 	int orientation;
-	int stack_to_push;
-list nodes_to_visit;
-list stacks[2];
-
+	list nodes_to_visit;
+	char grid[GRID_NROWS*GRID_NCOLS];
 task main()
 {
-setSensorMode(gyroSensor, modeEV3Gyro_Angle);
-
 	int cities_found;
 	int i;
-	char grid[GRID_NROWS*GRID_NCOLS];
-
 
 	bool exit;
 	list_n test_node;
-
 
 	list *aux;
 
@@ -39,25 +32,31 @@ setSensorMode(gyroSensor, modeEV3Gyro_Angle);
 		grid[i] = '0';
 	cities_found = 0;
 	set_grid(grid,2,3,'0'); // GOAL
-	set_grid(grid,position[0],position[1],1);
+	set_grid(grid,position[0],position[1],'2');
 	initialize_list(nodes_to_visit, QEUE);
 	exit = false;
-	stack_to_push = 0;
-	aux = &stacks[0];
-	initialize_list(aux, STACK);
-	aux = &stacks[1];
-	initialize_list(aux, STACK);
 	/***************************************/
 
-	while (cities_found < 5 && !exit){
+	// test_node.x = 5;
+	// test_node.y = 0;
+	// push(nodes_to_visit, test_node);
+	// move_to_next_node(grid, position, &orientation, nodes_to_visit);
+	// print_path(added_on_qeue);
+
+	//do{
+	//	if(!pop(bsf,test_node))
+	//		break;
+	//	writeDebugStream("%d,%d \t", test_node.x,test_node.y);
+	//}while(true);
+	while (cities_found < 6 && !exit){
 		 //if(check_objective()){
 			cities_found++;
 		 //}
 		check_surroundings(grid, position, orientation, nodes_to_visit);
-		if(!move_to_next_node(grid,position, &orientation, nodes_to_visit, stacks, &stack_to_push))
+		if(!move_to_next_node(grid,position, &orientation, nodes_to_visit))
 			exit = true;
 		set_grid(grid,position[0],position[1],'2');
-		if (cities_found == 5)
+		if (cities_found == 6)
 			check_surroundings(grid, position, orientation, nodes_to_visit);
 	}
 	print_grid(grid);

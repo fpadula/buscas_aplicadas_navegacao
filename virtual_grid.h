@@ -23,19 +23,19 @@ bool isAdjacent(int x1, int y1, int x2, int y2){
 		return false;
 }
 
-void print_grid(int *grid){
+void print_grid(char *grid){
 	int i,j;
 
 	for(i=GRID_NROWS - 1;i>=0;i--){
 		for(j=0;j<GRID_NCOLS;j++){
-			writeDebugStream("%d\t", grid[GRID_NCOLS*i + j]);
+			writeDebugStream("%c\t", grid[GRID_NCOLS*i + j]);
 		}
 		writeDebugStreamLine("");
 	}
 
 }
 
-bool set_grid(int *grid, int x, int y, int value){
+bool set_grid(char *grid, int x, int y, char value){
 	if(x >=0 && y >=0 && x < GRID_NCOLS && y < GRID_NROWS){
 		grid[GRID_NCOLS*y + x] = value;
 		return true;
@@ -43,8 +43,8 @@ bool set_grid(int *grid, int x, int y, int value){
 	return false;
 }
 
-bool update_non_visited(int *grid, int x, int y, int value){
-	if(grid[GRID_NCOLS*y + x] == -1)
+bool update_non_visited(char *grid, int x, int y, char value){
+	if(grid[GRID_NCOLS*y + x] == '0')
 		return set_grid(grid,x,y,value);
 	else
 		return false;
@@ -159,7 +159,7 @@ void turn(int direction, int *orientation){
 	}
 }
 
-void check_surroundings(int *grid, int *position, int orientation, list *nodes_to_visit){
+void check_surroundings(char *grid, int *position, int orientation, list *nodes_to_visit){
 	bool obstacle[3];
 	list_n new_node;
 
@@ -185,17 +185,17 @@ void check_surroundings(int *grid, int *position, int orientation, list *nodes_t
 
 	switch(orientation){
 		case (NORTE):
-			if (update_non_visited(grid, position[0] - 1,position[1], obstacle[0] ? 2 : 0) && !obstacle[0]){
+			if (update_non_visited(grid, position[0] - 1,position[1], obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if (update_non_visited(grid, position[0],position[1] + 1, obstacle[1] ? 2 : 0) && !obstacle[1]){
+			if (update_non_visited(grid, position[0],position[1] + 1, obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
 			}
-			if (update_non_visited(grid, position[0] + 1,position[1], obstacle[2] ? 2 : 0) && !obstacle[2]){
+			if (update_non_visited(grid, position[0] + 1,position[1], obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
@@ -203,17 +203,17 @@ void check_surroundings(int *grid, int *position, int orientation, list *nodes_t
 		break;
 
 		case (SUL):
-			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[0] ? 2 : 0) && !obstacle[0]){
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[1] ? 2 : 0) && !obstacle[1]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[2] ? 2 : 0) && !obstacle[2]){
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
@@ -221,17 +221,17 @@ void check_surroundings(int *grid, int *position, int orientation, list *nodes_t
 		break;
 
 		case (LESTE):
-			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[0] ? 2 : 0) && !obstacle[0]){
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[1] ? 2 : 0) && !obstacle[1]){
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[2] ? 2 : 0) && !obstacle[2]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
@@ -239,17 +239,17 @@ void check_surroundings(int *grid, int *position, int orientation, list *nodes_t
 		break;
 
 		case (OESTE):
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[0] ? 2 : 0) && !obstacle[0]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[1] ? 2 : 0) && !obstacle[1]){
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[2] ? 2 : 0) && !obstacle[2]){
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
@@ -291,7 +291,7 @@ bool check_objective(){
 	return detected_collor;
 }
 
-void move_to_adjacent(int *grid, int *position, int *orientation, list_n where_to_move){
+void move_to_adjacent(char *grid, int *position, int *orientation, list_n where_to_move){
 	int node_orientation;
 	if(position[0] - where_to_move.x > 0)
 		node_orientation = OESTE;
@@ -400,7 +400,7 @@ void move_to_adjacent(int *grid, int *position, int *orientation, list_n where_t
 	}
 }
 
-bool move_to_next_node(int *grid, int *position, int *orientation, list *to_go, list *stacks, int *stack_to_push){
+bool move_to_next_node(char *grid, int *position, int *orientation, list *to_go, list *stacks, int *stack_to_push){
 	list_n dest_node;
 	list_n node_to_move;
 	list_n node_to_push;

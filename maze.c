@@ -48,7 +48,7 @@ task main()
 	//		break;
 	//	writeDebugStream("%d,%d \t", test_node.x,test_node.y);
 	//}while(true);
-	while (cities_found < 6 && !exit){
+	while (cities_found < 3 && !exit){
 		 //if(check_objective()){
 			cities_found++;
 		 //}
@@ -56,7 +56,7 @@ task main()
 		if(!move_to_next_node(grid,position, &orientation, nodes_to_visit))
 			exit = true;
 		set_grid(grid,position[0],position[1],'2');
-		if (cities_found == 6)
+		if (cities_found == 3)
 			check_surroundings(grid, position, orientation, nodes_to_visit);
 	}
 	print_grid(grid);

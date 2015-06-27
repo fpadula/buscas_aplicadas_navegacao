@@ -199,17 +199,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 
 	switch(orientation){
 		case (NORTE):
-			if (update_non_visited(grid, position[0] - 1,position[1], obstacle[0] ? '3' : '0') && !obstacle[0]){
+			if (update_non_visited(grid, position[0] - 1,position[1], obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if (update_non_visited(grid, position[0],position[1] + 1, obstacle[1] ? '3' : '0') && !obstacle[1]){
+			if (update_non_visited(grid, position[0],position[1] + 1, obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
 			}
-			if (update_non_visited(grid, position[0] + 1,position[1], obstacle[2] ? '3' : '0') && !obstacle[2]){
+			if (update_non_visited(grid, position[0] + 1,position[1], obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
@@ -217,17 +217,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 		break;
 
 		case (SUL):
-			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[0] ? '3' : '0') && !obstacle[0]){
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[1] ? '3' : '0') && !obstacle[1]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[2] ? '3' : '0') && !obstacle[2]){
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
@@ -235,17 +235,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 		break;
 
 		case (LESTE):
-			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[0] ? '3' : '0') && !obstacle[0]){
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[1] ? '3' : '0') && !obstacle[1]){
+			if(update_non_visited(grid, position[0] + 1,position[1], obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0] + 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[2] ? '3' : '0') && !obstacle[2]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
@@ -253,17 +253,17 @@ void check_surroundings(char *grid, int *position, int orientation, list *nodes_
 		break;
 
 		case (OESTE):
-			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[0] ? '3' : '0') && !obstacle[0]){
+			if(update_non_visited(grid, position[0],position[1] - 1, obstacle[0] ? '3' : '1') && !obstacle[0]){
 				new_node.x = position[0];
 				new_node.y = position[1] - 1;
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[1] ? '3' : '0') && !obstacle[1]){
+			if(update_non_visited(grid, position[0] - 1,position[1], obstacle[1] ? '3' : '1') && !obstacle[1]){
 				new_node.x = position[0] - 1;
 				new_node.y = position[1];
 				push(nodes_to_visit, new_node);
 			}
-			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[2] ? '3' : '0') && !obstacle[2]){
+			if(update_non_visited(grid, position[0],position[1] + 1, obstacle[2] ? '3' : '1') && !obstacle[2]){
 				new_node.x = position[0];
 				new_node.y = position[1] + 1;
 				push(nodes_to_visit, new_node);

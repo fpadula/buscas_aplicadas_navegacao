@@ -13,7 +13,7 @@
 #define SUL 1
 #define LESTE 2
 #define OESTE 3
-#define TURN_TIME 89
+#define TURN_TIME 87
 #define CELL_SIZE 675 // Cell size: 30. Angular distance: 30*20,9 = 627
 
 bool isAdjacent(int x1, int y1, int x2, int y2){

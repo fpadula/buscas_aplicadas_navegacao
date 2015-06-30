@@ -29,7 +29,7 @@ bool find(list *list, list_n *node){
 	int i;
 	for (i=0;i<=list->last_node_pos;i++){
 		if((list->list_nodes[i].x == node->x) && (list->list_nodes[i].y == node->y))
-			return true;	 
+			return true;
 	}
 	return false;
 }
@@ -68,8 +68,6 @@ int pop(list *list, list_n *node){
 }
 
 int push(list *list, list_n node){
-	int i;
-
 	if(list->type == STACK){
 		if(list->last_node_pos < LIST_SIZE - 1){
 			list->last_node_pos++;

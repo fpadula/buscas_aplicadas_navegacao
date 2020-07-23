@@ -1,3 +1,2 @@
-# SCC0273 - Robôs Móveis Inteligentes
-## Projeto 2
-Projeto 2 da disciplina Robôs Móveis Inteligentes da Universidade de São Paulo.
+# Estratégias de busca aplicadas em um robô real 
+Estratégias de busca aplicadas em um robô real para navegação em um ambiente não mapeado
